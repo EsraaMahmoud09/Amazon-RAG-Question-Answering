@@ -1,0 +1,11 @@
+streamlit
+pandas
+numpy
+chromadb
+sentence-transformers
+rank-bm25
+google-genai
+python-dotenv
+torch
+transformers
+scikit-learn
