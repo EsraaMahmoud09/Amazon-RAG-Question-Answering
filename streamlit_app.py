@@ -16,7 +16,7 @@ url = f'https://drive.google.com/uc?id={1W69NkpHQTLSSDNY-IvGgLLFPOWEEl6Ia}'
 
 if not os.path.exists(DB_FOLDER):
     st.info("⏳ Downloading database for the first time, this may take a minute...")
-    url = f'https://drive.google.com/uc?id={1W69NkpHQTlSSDNY-IvGgLLfPOWEEl6Ia}'
+    url = f'https://drive.google.com/uc?id={1W69NkpHQTLSSDNY-IvGgLLFPOWEEl6IaD}'
     
     # Download the file
     gdown.download(url, ZIP_FILE, quiet=False)
