@@ -11,7 +11,8 @@ DB_FOLDER = "chroma_db"
 ZIP_FILE = "chroma_db.zip"
 
 # ⬇️ Replace the text below with your File ID from your Google Drive link
-GDRIVE_FILE_ID = "YOUR_FILE_ID_HERE"
+GDRIVE_FILE_ID = "1W69NkpHQTLSSDNY-IvGgLLFPOWEEl6Ia"
+url = f'https://drive.google.com/uc?id={1W69NkpHQTLSSDNY-IvGgLLFPOWEEl6Ia}'
 
 if not os.path.exists(DB_FOLDER):
     st.info("⏳ Downloading database for the first time, this may take a minute...")
