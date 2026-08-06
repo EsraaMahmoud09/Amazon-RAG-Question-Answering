@@ -16,22 +16,18 @@ GDRIVE_FILE_ID = "1W69NkpHQTLSSDNY-IvGgLLFPOWEEl6Ia"
 if not os.path.exists(DB_FOLDER):
     st.info("⏳ Downloading database for the first time, this may take a minute...")
     
-    # ✅ هنا حطينا اسم المتغير GDRIVE_FILE_ID داخل الأقواس
-    url = f'https://drive.google.com/uc?id={GDRIVE_FILE_ID}'
+    # Download directly using File ID to bypass large file warning screen
+    gdown.download(id=GDRIVE_FILE_ID, output=ZIP_FILE, quiet=False)
     
-    # Download the file
-    gdown.download(url, ZIP_FILE, quiet=False)
-    
-    # Extract zip file
+    # Extract the zip file contents
     with zipfile.ZipFile(ZIP_FILE, 'r') as zip_ref:
         zip_ref.extractall(".")
     
-    # Remove downloaded zip file to save storage space
+    # Remove the downloaded zip file to save disk space
     if os.path.exists(ZIP_FILE):
         os.remove(ZIP_FILE)
         
     st.success("✅ Database downloaded and extracted successfully!")
-
 # ==========================================
 # 2. Import Search Utils & Gemini (After ensuring DB exists)
 # ==========================================
