@@ -10,13 +10,14 @@ from dotenv import load_dotenv
 DB_FOLDER = "chroma_db"
 ZIP_FILE = "chroma_db.zip"
 
-# ⬇️ Replace the text below with your File ID from your Google Drive link
+# File ID from Google Drive
 GDRIVE_FILE_ID = "1W69NkpHQTLSSDNY-IvGgLLFPOWEEl6Ia"
-url = f'https://drive.google.com/uc?id={1W69NkpHQTLSSDNY-IvGgLLFPOWEEl6Ia}'
 
 if not os.path.exists(DB_FOLDER):
     st.info("⏳ Downloading database for the first time, this may take a minute...")
-    url = f'https://drive.google.com/uc?id={1W69NkpHQTLSSDNY-IvGgLLFPOWEEl6IaD}'
+    
+    # ✅ هنا حطينا اسم المتغير GDRIVE_FILE_ID داخل الأقواس
+    url = f'https://drive.google.com/uc?id={GDRIVE_FILE_ID}'
     
     # Download the file
     gdown.download(url, ZIP_FILE, quiet=False)
