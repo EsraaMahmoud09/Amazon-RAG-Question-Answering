@@ -1,0 +1,550 @@
+{
+ "cells": [
+  {
+   "cell_type": "code",
+   "execution_count": 1,
+   "id": "7593634a-b90c-4f2b-b3d5-2937119ef980",
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "# =============================================================================\n",
+    "# Vector Database\n",
+    "# =============================================================================\n",
+    "import chromadb\n",
+    "\n",
+    "# =============================================================================\n",
+    "# Data Processing\n",
+    "# =============================================================================\n",
+    "import pandas as pd\n",
+    "import numpy as np"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 2,
+   "id": "01d4987b-a79b-4846-81e6-cf5b9aeacf21",
+   "metadata": {},
+   "outputs": [
+    {
+     "name": "stdout",
+     "output_type": "stream",
+     "text": [
+      "Semantic Dataset Shape: (22558, 9)\n"
+     ]
+    },
+    {
+     "data": {
+      "text/html": [
+       "<div>\n",
+       "<style scoped>\n",
+       "    .dataframe tbody tr th:only-of-type {\n",
+       "        vertical-align: middle;\n",
+       "    }\n",
+       "\n",
+       "    .dataframe tbody tr th {\n",
+       "        vertical-align: top;\n",
+       "    }\n",
+       "\n",
+       "    .dataframe thead th {\n",
+       "        text-align: right;\n",
+       "    }\n",
+       "</style>\n",
+       "<table border=\"1\" class=\"dataframe\">\n",
+       "  <thead>\n",
+       "    <tr style=\"text-align: right;\">\n",
+       "      <th></th>\n",
+       "      <th>chunk_id</th>\n",
+       "      <th>QuestionID</th>\n",
+       "      <th>Category</th>\n",
+       "      <th>QuestionType</th>\n",
+       "      <th>QuestionTime</th>\n",
+       "      <th>chunk_index</th>\n",
+       "      <th>chunk_text</th>\n",
+       "      <th>search_text</th>\n",
+       "      <th>embedding</th>\n",
+       "    </tr>\n",
+       "  </thead>\n",
+       "  <tbody>\n",
+       "    <tr>\n",
+       "      <th>0</th>\n",
+       "      <td>C15Q2112_row_0_c_0</td>\n",
+       "      <td>C15Q2112</td>\n",
+       "      <td>Tools and Home Improvement</td>\n",
+       "      <td>open-ended</td>\n",
+       "      <td>2013-04-20</td>\n",
+       "      <td>0</td>\n",
+       "      <td>Question: - what are the dimensions of this it...</td>\n",
+       "      <td>Category: Tools and Home Improvement Question ...</td>\n",
+       "      <td>[0.005750724114477634, 0.0893775224685669, -0....</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>1</th>\n",
+       "      <td>C9Q4595_row_1_c_0</td>\n",
+       "      <td>C9Q4595</td>\n",
+       "      <td>Home and Kitchen</td>\n",
+       "      <td>open-ended</td>\n",
+       "      <td>2014-02-06</td>\n",
+       "      <td>0</td>\n",
+       "      <td>Question: how much booze can it hold? Answer: ...</td>\n",
+       "      <td>Category: Home and Kitchen Question Type: open...</td>\n",
+       "      <td>[0.10887277871370316, 0.08158908039331436, -0....</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>2</th>\n",
+       "      <td>C4Q7999_row_2_c_0</td>\n",
+       "      <td>C4Q7999</td>\n",
+       "      <td>Cell Phones and Accessories</td>\n",
+       "      <td>open-ended</td>\n",
+       "      <td>2014-08-09</td>\n",
+       "      <td>0</td>\n",
+       "      <td>Question: will this case fit nokia lumia 520 A...</td>\n",
+       "      <td>Category: Cell Phones and Accessories Question...</td>\n",
+       "      <td>[-0.11016276478767395, 0.046286050230264664, 0...</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>3</th>\n",
+       "      <td>C8Q8916_row_3_c_0</td>\n",
+       "      <td>C8Q8916</td>\n",
+       "      <td>Health and Personal Care</td>\n",
+       "      <td>open-ended</td>\n",
+       "      <td>2014-04-25</td>\n",
+       "      <td>0</td>\n",
+       "      <td>Question: when folded in the sitting position,...</td>\n",
+       "      <td>Category: Health and Personal Care Question Ty...</td>\n",
+       "      <td>[0.028559448197484016, 0.017597395926713943, 0...</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>4</th>\n",
+       "      <td>C14Q905_row_4_c_0</td>\n",
+       "      <td>C14Q905</td>\n",
+       "      <td>Sports and Outdoors</td>\n",
+       "      <td>open-ended</td>\n",
+       "      <td>2015-04-15</td>\n",
+       "      <td>0</td>\n",
+       "      <td>Question: how long should i leave this on to g...</td>\n",
+       "      <td>Category: Sports and Outdoors Question Type: o...</td>\n",
+       "      <td>[-0.0072077070362865925, 0.05245823785662651, ...</td>\n",
+       "    </tr>\n",
+       "  </tbody>\n",
+       "</table>\n",
+       "</div>"
+      ],
+      "text/plain": [
+       "             chunk_id QuestionID                     Category QuestionType  \\\n",
+       "0  C15Q2112_row_0_c_0   C15Q2112   Tools and Home Improvement   open-ended   \n",
+       "1   C9Q4595_row_1_c_0    C9Q4595             Home and Kitchen   open-ended   \n",
+       "2   C4Q7999_row_2_c_0    C4Q7999  Cell Phones and Accessories   open-ended   \n",
+       "3   C8Q8916_row_3_c_0    C8Q8916     Health and Personal Care   open-ended   \n",
+       "4   C14Q905_row_4_c_0    C14Q905          Sports and Outdoors   open-ended   \n",
+       "\n",
+       "  QuestionTime  chunk_index  \\\n",
+       "0   2013-04-20            0   \n",
+       "1   2014-02-06            0   \n",
+       "2   2014-08-09            0   \n",
+       "3   2014-04-25            0   \n",
+       "4   2015-04-15            0   \n",
+       "\n",
+       "                                          chunk_text  \\\n",
+       "0  Question: - what are the dimensions of this it...   \n",
+       "1  Question: how much booze can it hold? Answer: ...   \n",
+       "2  Question: will this case fit nokia lumia 520 A...   \n",
+       "3  Question: when folded in the sitting position,...   \n",
+       "4  Question: how long should i leave this on to g...   \n",
+       "\n",
+       "                                         search_text  \\\n",
+       "0  Category: Tools and Home Improvement Question ...   \n",
+       "1  Category: Home and Kitchen Question Type: open...   \n",
+       "2  Category: Cell Phones and Accessories Question...   \n",
+       "3  Category: Health and Personal Care Question Ty...   \n",
+       "4  Category: Sports and Outdoors Question Type: o...   \n",
+       "\n",
+       "                                           embedding  \n",
+       "0  [0.005750724114477634, 0.0893775224685669, -0....  \n",
+       "1  [0.10887277871370316, 0.08158908039331436, -0....  \n",
+       "2  [-0.11016276478767395, 0.046286050230264664, 0...  \n",
+       "3  [0.028559448197484016, 0.017597395926713943, 0...  \n",
+       "4  [-0.0072077070362865925, 0.05245823785662651, ...  "
+      ]
+     },
+     "execution_count": 2,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "# =============================================================================\n",
+    "# Load Semantic Chunk Metadata\n",
+    "# =============================================================================\n",
+    "semantic_dataset = pd.read_csv(\"semantic_chunks.csv\")\n",
+    "print(\"Semantic Dataset Shape:\", semantic_dataset.shape)\n",
+    "\n",
+    "semantic_dataset.head()"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 3,
+   "id": "ff24ca44-35a9-4010-8b29-76255f4ec2c6",
+   "metadata": {},
+   "outputs": [
+    {
+     "name": "stdout",
+     "output_type": "stream",
+     "text": [
+      "Embedding Matrix Shape: (22558, 384)\n"
+     ]
+    }
+   ],
+   "source": [
+    "# =============================================================================\n",
+    "# Load Pre-generated Embeddings\n",
+    "# =============================================================================\n",
+    "embeddings = np.load( \"semantic_embeddings.npy\")\n",
+    "print(\"Embedding Matrix Shape:\", embeddings.shape)"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 4,
+   "id": "c3819f19-6146-493d-b716-8857bed98282",
+   "metadata": {},
+   "outputs": [
+    {
+     "name": "stdout",
+     "output_type": "stream",
+     "text": [
+      "Chunks and embeddings are aligned successfully.\n"
+     ]
+    }
+   ],
+   "source": [
+    "# =============================================================================\n",
+    "# Validate Data Alignment\n",
+    "# =============================================================================\n",
+    "assert len(semantic_dataset) == len(embeddings)\n",
+    "print(\"Chunks and embeddings are aligned successfully.\")"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 5,
+   "id": "22229f57-9bdc-4a70-b7e2-7ecc0e6b97fd",
+   "metadata": {},
+   "outputs": [
+    {
+     "name": "stdout",
+     "output_type": "stream",
+     "text": [
+      "Chroma client created successfully.\n"
+     ]
+    }
+   ],
+   "source": [
+    "# =============================================================================\n",
+    "# Create Persistent Chroma Database\n",
+    "# =============================================================================\n",
+    "client = chromadb.PersistentClient( path=\"./chroma_db\")\n",
+    "print(\"Chroma client created successfully.\")"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 6,
+   "id": "f9d76f80-ec87-45a7-a8b2-0b1b0ca8e7e0",
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "# =============================================================================\n",
+    "# Create Semantic Search Collection\n",
+    "# =============================================================================\n",
+    "collection = client.get_or_create_collection( name =\"amazon_qa_semantic\", metadata={\"hnsw:space\": \"cosine\"})"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 7,
+   "id": "5bf1d934-584e-47b4-9720-089c4a8b5b43",
+   "metadata": {},
+   "outputs": [
+    {
+     "name": "stdout",
+     "output_type": "stream",
+     "text": [
+      "Metadata prepared successfully.\n"
+     ]
+    }
+   ],
+   "source": [
+    "# =============================================================================\n",
+    "# Prepare Metadata for Chroma\n",
+    "# =============================================================================\n",
+    "metadatas = []\n",
+    "\n",
+    "for _, row in semantic_dataset.iterrows():\n",
+    "\n",
+    "    metadatas.append({\n",
+    "\n",
+    "        \"QuestionID\": str(row[\"QuestionID\"]),\n",
+    "\n",
+    "        \"Category\": str(row[\"Category\"]),\n",
+    "\n",
+    "        \"QuestionType\": str(row[\"QuestionType\"]),\n",
+    "\n",
+    "        \"QuestionTime\": str(row[\"QuestionTime\"])})\n",
+    "\n",
+    "print(\"Metadata prepared successfully.\")"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 8,
+   "id": "f74b30e2-f7cb-4e97-825a-955b3551f279",
+   "metadata": {},
+   "outputs": [
+    {
+     "name": "stdout",
+     "output_type": "stream",
+     "text": [
+      "             chunk_id\n",
+      "0  C15Q2112_row_0_c_0\n",
+      "1   C9Q4595_row_1_c_0\n",
+      "2   C4Q7999_row_2_c_0\n",
+      "3   C8Q8916_row_3_c_0\n",
+      "4   C14Q905_row_4_c_0\n",
+      "5  C9Q23536_row_5_c_0\n",
+      "6  C9Q10688_row_6_c_0\n",
+      "7   C1Q6884_row_7_c_0\n",
+      "8  C13Q1527_row_8_c_0\n",
+      "9  C15Q9122_row_9_c_0\n"
+     ]
+    }
+   ],
+   "source": [
+    "# Check Duplicates\n",
+    "print(semantic_dataset[[\"chunk_id\"]].head(10))"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 9,
+   "id": "137fb64f-ac71-4828-b698-2b74e9fa108f",
+   "metadata": {},
+   "outputs": [
+    {
+     "name": "stdout",
+     "output_type": "stream",
+     "text": [
+      "Rows: 22558\n",
+      "Unique IDs: 22558\n"
+     ]
+    }
+   ],
+   "source": [
+    "# Check Duplicates\n",
+    "print(\"Rows:\", len(semantic_dataset))\n",
+    "print(\"Unique IDs:\", semantic_dataset[\"chunk_id\"].nunique())"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 10,
+   "id": "ddd9b929-55ba-457b-9eda-4a85d1e1c056",
+   "metadata": {},
+   "outputs": [
+    {
+     "data": {
+      "text/html": [
+       "<div>\n",
+       "<style scoped>\n",
+       "    .dataframe tbody tr th:only-of-type {\n",
+       "        vertical-align: middle;\n",
+       "    }\n",
+       "\n",
+       "    .dataframe tbody tr th {\n",
+       "        vertical-align: top;\n",
+       "    }\n",
+       "\n",
+       "    .dataframe thead th {\n",
+       "        text-align: right;\n",
+       "    }\n",
+       "</style>\n",
+       "<table border=\"1\" class=\"dataframe\">\n",
+       "  <thead>\n",
+       "    <tr style=\"text-align: right;\">\n",
+       "      <th></th>\n",
+       "      <th>QuestionID</th>\n",
+       "      <th>chunk_id</th>\n",
+       "      <th>chunk_text</th>\n",
+       "    </tr>\n",
+       "  </thead>\n",
+       "  <tbody>\n",
+       "  </tbody>\n",
+       "</table>\n",
+       "</div>"
+      ],
+      "text/plain": [
+       "Empty DataFrame\n",
+       "Columns: [QuestionID, chunk_id, chunk_text]\n",
+       "Index: []"
+      ]
+     },
+     "execution_count": 10,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "# Check Duplicates\n",
+    "duplicates = semantic_dataset[ semantic_dataset[\"chunk_id\"].duplicated(keep=False)].sort_values(\"chunk_id\")\n",
+    "\n",
+    "duplicates[ [\"QuestionID\", \"chunk_id\", \"chunk_text\"]].head(20)"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 11,
+   "id": "4ee9cf60-b1e4-425c-9cd9-381027958cf2",
+   "metadata": {},
+   "outputs": [
+    {
+     "name": "stdout",
+     "output_type": "stream",
+     "text": [
+      "Stored 5000 chunks\n",
+      "Stored 10000 chunks\n",
+      "Stored 15000 chunks\n",
+      "Stored 20000 chunks\n",
+      "Stored 25000 chunks\n"
+     ]
+    }
+   ],
+   "source": [
+    "# =============================================================================\n",
+    "# Store Embeddings in Batches\n",
+    "# =============================================================================\n",
+    "batch_size = 5000\n",
+    "\n",
+    "for start in range(0, len(semantic_dataset), batch_size):\n",
+    "\n",
+    "    end = start + batch_size\n",
+    "\n",
+    "    collection.add(\n",
+    "        ids=semantic_dataset[\"chunk_id\"].iloc[start:end].astype(str).tolist(),\n",
+    "        documents=semantic_dataset[\"chunk_text\"].iloc[start:end].fillna(\"\").tolist(),\n",
+    "        embeddings=embeddings[start:end].tolist(),\n",
+    "        metadatas=metadatas[start:end], )\n",
+    "\n",
+    "    print(f\"Stored {end} chunks\")"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 12,
+   "id": "d9723721-f935-47be-84d3-54d3defaba1f",
+   "metadata": {},
+   "outputs": [
+    {
+     "name": "stdout",
+     "output_type": "stream",
+     "text": [
+      "Stored 22558 / 22558\n"
+     ]
+    }
+   ],
+   "source": [
+    "print(f\"Stored {min(end, len(semantic_dataset))} / {len(semantic_dataset)}\")"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 13,
+   "id": "914f09ab-15b4-49cb-890b-961856b47922",
+   "metadata": {},
+   "outputs": [
+    {
+     "data": {
+      "text/plain": [
+       "{'ids': [['row_0_chunk_0', 'C15Q2112_row_0_c_0', 'row_20046_chunk_0']],\n",
+       " 'embeddings': None,\n",
+       " 'documents': [['Question: - what are the dimensions of this item? Answer:',\n",
+       "   'Question: - what are the dimensions of this item? Answer:',\n",
+       "   'Question: - what are the dimensions of this item? Answer: two keys']],\n",
+       " 'uris': None,\n",
+       " 'included': ['metadatas', 'documents', 'distances'],\n",
+       " 'data': None,\n",
+       " 'metadatas': [[{'QuestionType': 'open-ended',\n",
+       "    'QuestionTime': '2013-04-20',\n",
+       "    'Category': 'Tools and Home Improvement',\n",
+       "    'QuestionID': 'C15Q2112'},\n",
+       "   {'QuestionID': 'C15Q2112',\n",
+       "    'Category': 'Tools and Home Improvement',\n",
+       "    'QuestionType': 'open-ended',\n",
+       "    'QuestionTime': '2013-04-20'},\n",
+       "   {'Category': 'Tools and Home Improvement',\n",
+       "    'QuestionType': 'open-ended',\n",
+       "    'QuestionTime': '2013-04-20',\n",
+       "    'QuestionID': 'C15Q2112'}]],\n",
+       " 'distances': [[0.0, 0.0, 0.08064407110214233]]}"
+      ]
+     },
+     "execution_count": 13,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "# =============================================================================\n",
+    "# Test Semantic Retrieval\n",
+    "# =============================================================================\n",
+    "query_embedding = embeddings[0].tolist()\n",
+    "\n",
+    "results = collection.query(query_embeddings =[query_embedding], n_results=3)\n",
+    "results"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 14,
+   "id": "ae1232a1-bfb1-4ebc-a897-7086ee01c78c",
+   "metadata": {},
+   "outputs": [
+    {
+     "name": "stdout",
+     "output_type": "stream",
+     "text": [
+      "Number of stored documents: 136429\n",
+      "Chroma database saved successfully.\n"
+     ]
+    }
+   ],
+   "source": [
+    "# ==========================================================\n",
+    "# Verify Chroma Database Persistence\n",
+    "# ==========================================================\n",
+    "print(\"Number of stored documents:\",collection.count())\n",
+    "print( \"Chroma database saved successfully.\")"
+   ]
+  }
+ ],
+ "metadata": {
+  "kernelspec": {
+   "display_name": "Python (RAG)",
+   "language": "python",
+   "name": "rag"
+  },
+  "language_info": {
+   "codemirror_mode": {
+    "name": "ipython",
+    "version": 3
+   },
+   "file_extension": ".py",
+   "mimetype": "text/x-python",
+   "name": "python",
+   "nbconvert_exporter": "python",
+   "pygments_lexer": "ipython3",
+   "version": "3.11.15"
+  }
+ },
+ "nbformat": 4,
+ "nbformat_minor": 5
+}
