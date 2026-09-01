@@ -128,10 +128,19 @@ Answer:
         st.success(answer)
 
         with st.expander("View Retrieved Documents"):
-            # Combine all retrieved document texts into a single string
-            combined_docs = "\n\n".join([item["document"] for item in retrieved_chunks])
+            reviews_list = []
+            for i, item in enumerate(retrieved_chunks, start=1):
+                text = item["document"]
+                
+                # Extract clean review text by removing question prefixes if present
+                if "Answer:" in text:
+                    text = text.split("Answer:")[-1].strip()
+                elif "Question:" in text:
+                    text = text.split("?")[-1].replace("Answer:", "").strip()
+                
+                reviews_list.append(f"**Review {i}:**\n{text}")
             
-            # Display the consolidated text inside the expander
-            st.write(combined_docs)
+            # Display formatted reviews separated by horizontal lines
+            st.markdown("\n\n---\n\n".join(reviews_list))
     else:
         st.warning("Please enter a question first.")
