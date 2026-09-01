@@ -13,7 +13,7 @@ st.set_page_config(
     layout="wide"
 )
 
-# Modern Navy / Indigo & Neutral Gray Theme Styling
+# Custom CSS with Floating Floating Chat Widget Styling
 st.markdown("""
 <style>
     /* Global Styles */
@@ -29,7 +29,7 @@ st.markdown("""
         padding: 35px;
         background: #ffffff;
         border-radius: 16px;
-        box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.05), 0 8px 10px -6px rgba(0, 0, 0, 0.01);
+        box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.05);
         border: 1px solid #e2e8f0;
         text-align: center;
     }
@@ -37,7 +37,6 @@ st.markdown("""
         color: #1e293b;
         font-size: 28px;
         font-weight: 800;
-        margin-bottom: 4px;
     }
     .auth-subtitle {
         color: #64748b;
@@ -55,31 +54,17 @@ st.markdown("""
         align-items: center;
         justify-content: space-between;
         margin-bottom: 24px;
-        box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
-    }
-    .shopmind-brand {
-        display: flex;
-        align-items: center;
-        gap: 12px;
     }
     .shopmind-logo {
         color: #6366f1;
         font-size: 24px;
         font-weight: 800;
-        letter-spacing: -0.5px;
     }
     .shopmind-tagline {
         color: #94a3b8;
         font-size: 13px;
         border-left: 1px solid #334155;
         padding-left: 12px;
-    }
-    .header-actions {
-        display: flex;
-        gap: 20px;
-        color: #cbd5e1;
-        font-size: 14px;
-        font-weight: 500;
     }
     
     /* Welcome Banner */
@@ -89,18 +74,8 @@ st.markdown("""
         border-radius: 16px;
         color: white;
         margin-bottom: 24px;
-        box-shadow: 0 10px 15px -3px rgba(79, 70, 229, 0.2);
     }
-    .welcome-title {
-        font-size: 24px;
-        font-weight: 700;
-        margin-bottom: 6px;
-    }
-    .welcome-sub {
-        color: #e0e7ff;
-        font-size: 15px;
-    }
-
+    
     /* Product Cards Styling */
     .product-card {
         background-color: #ffffff;
@@ -108,15 +83,11 @@ st.markdown("""
         border-radius: 14px;
         border: 1px solid #e2e8f0;
         box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
-        transition: transform 0.2s ease, box-shadow 0.2s ease;
-        display: flex;
-        flex-direction: column;
-        justify-content: space-between;
+        transition: transform 0.2s ease;
         height: 100%;
     }
     .product-card:hover {
         transform: translateY(-4px);
-        box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
     }
     .product-img-container {
         width: 100%;
@@ -136,59 +107,17 @@ st.markdown("""
         font-weight: 600;
         color: #1e293b;
         margin-bottom: 8px;
-        line-height: 1.3;
-        height: 40px;
-        overflow: hidden;
     }
     .product-rating {
         color: #f59e0b;
         font-size: 13px;
         font-weight: 600;
-        margin-bottom: 8px;
     }
     .product-price {
         color: #0f172a;
         font-size: 18px;
         font-weight: 700;
-        margin-bottom: 12px;
-    }
-    .view-btn {
-        background-color: #f1f5f9;
-        color: #334155;
-        text-align: center;
-        padding: 8px 0;
-        border-radius: 8px;
-        font-size: 13px;
-        font-weight: 600;
-        border: none;
-    }
-
-    /* AI Assistant Section */
-    .ai-section {
-        background-color: #ffffff;
-        border: 1px solid #e2e8f0;
-        border-radius: 16px;
-        padding: 28px;
-        margin-top: 32px;
-        box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.03);
-    }
-    .ai-header {
-        font-size: 22px;
-        font-weight: 700;
-        color: #0f172a;
-        margin-bottom: 4px;
-    }
-    .ai-sub {
-        color: #64748b;
-        font-size: 14px;
-        margin-bottom: 20px;
-    }
-    .ai-response-card {
-        background-color: #f8fafc;
-        border-left: 4px solid #6366f1;
-        padding: 20px;
-        border-radius: 8px;
-        margin-top: 20px;
+        margin-top: 6px;
     }
 </style>
 """, unsafe_allow_html=True)
@@ -225,7 +154,7 @@ if not st.session_state.authenticated:
                 else:
                     st.warning("Please fill in all required fields.")
         
-        st.markdown("<p style='text-align: center; color: #64748b; font-size: 14px; margin-top: 15px;'>Already have an account? <a href='#' style='color: #6366f1; text-decoration: none; font-weight: 600;'>Sign in</a></p>", unsafe_allow_html=True)
+        st.markdown("<p style='text-align: center; color: #64748b; font-size: 14px; margin-top: 15px;'>Already have an account? Sign in</p>", unsafe_allow_html=True)
     st.stop()
 
 # ==========================================
@@ -293,145 +222,72 @@ with st.sidebar:
     st.markdown("📚 **Books**")
     st.markdown("👕 **Fashion**")
     st.markdown("🎮 **Gaming**")
-    
-    st.divider()
-    st.markdown("#### Your Account")
-    st.markdown("👤 **My Account**")
-    st.markdown("🛒 **My Cart**")
-    st.markdown("❤️ **Wishlist**")
-    st.markdown("⚙️ **Settings**")
-    
-    st.divider()
-    st.markdown("#### Help")
-    st.markdown("❓ **Customer Service**")
 
 # ==========================================
-# 5. Top Navbar Header
+# 5. Top Navbar Header & Welcome Banner
 # ==========================================
 st.markdown("""
 <div class="shopmind-header">
-    <div class="shopmind-brand">
+    <div style="display: flex; align-items: center; gap: 12px;">
         <span class="shopmind-logo">🛍️ ShopMind AI</span>
         <span class="shopmind-tagline">Intelligent Product Discovery</span>
     </div>
-    <div class="header-actions">
-        <span>🔍 Search</span>
-        <span>👤 Account</span>
-        <span>🛒 Cart (0)</span>
-    </div>
 </div>
 """, unsafe_allow_html=True)
 
-# ==========================================
-# 6. Welcome Section & Search Bar
-# ==========================================
 st.markdown(f"""
 <div class="welcome-card">
-    <div class="welcome-title">Welcome back, {user_display_name} 👋</div>
-    <div class="welcome-sub">Discover products and ask our AI assistant questions about customer reviews.</div>
+    <div style="font-size: 24px; font-weight: 700;">Welcome back, {user_display_name} 👋</div>
+    <div style="color: #e0e7ff; font-size: 15px;">Discover products and ask our AI assistant questions about customer reviews.</div>
 </div>
 """, unsafe_allow_html=True)
 
-st.text_input("Search Bar", placeholder="What are you looking for? (e.g. Wireless headphones, Gaming keyboard, Best camera...)", label_visibility="collapsed")
-
+st.text_input("Search Bar", placeholder="What are you looking for?", label_visibility="collapsed")
 st.write("")
 
 # ==========================================
-# 7. Featured Products Grid (Mock Data)
+# 6. Featured Products Grid
 # ==========================================
 st.subheader("Featured Products")
 
 products = [
-    {
-        "title": "Wireless Noise Cancelling Headphones",
-        "rating": "⭐ 4.5 / 5 (2,341 reviews)",
-        "price": "$89.99",
-        "image": "https://images.unsplash.com/photo-1505740420928-5e560c06d30e?w=500&q=80"
-    },
-    {
-        "title": "Mechanical Gaming Keyboard",
-        "rating": "⭐ 4.7 / 5 (1,892 reviews)",
-        "price": "$64.99",
-        "image": "https://images.unsplash.com/photo-1587829741301-dc798b83add3?w=500&q=80"
-    },
-    {
-        "title": "Smart Fitness Watch",
-        "rating": "⭐ 4.4 / 5 (3,120 reviews)",
-        "price": "$79.99",
-        "image": "https://images.unsplash.com/photo-1523275335684-37898b6baf30?w=500&q=80"
-    },
-    {
-        "title": "Digital Mirrorless Camera",
-        "rating": "⭐ 4.6 / 5 (987 reviews)",
-        "price": "$499.99",
-        "image": "https://images.unsplash.com/photo-1516035069371-29a1b244cc32?w=500&q=80"
-    },
-    {
-        "title": "Wireless Bluetooth Speaker",
-        "rating": "⭐ 4.3 / 5 (1,540 reviews)",
-        "price": "$45.99",
-        "image": "https://images.unsplash.com/photo-1608043152269-423dbba4e7e1?w=500&q=80"
-    },
-    {
-        "title": "Ergonomic Gaming Mouse",
-        "rating": "⭐ 4.6 / 5 (2,120 reviews)",
-        "price": "$39.99",
-        "image": "https://images.unsplash.com/photo-1527864550417-7fd91fc51a46?w=500&q=80"
-    }
+    {"title": "Wireless Headphones", "rating": "⭐ 4.5", "price": "$89.99", "image": "https://images.unsplash.com/photo-1505740420928-5e560c06d30e?w=500&q=80"},
+    {"title": "Gaming Keyboard", "rating": "⭐ 4.7", "price": "$64.99", "image": "https://images.unsplash.com/photo-1587829741301-dc798b83add3?w=500&q=80"},
+    {"title": "Smart Watch", "rating": "⭐ 4.4", "price": "$79.99", "image": "https://images.unsplash.com/photo-1523275335684-37898b6baf30?w=500&q=80"},
 ]
 
-# Display 6 products in two rows of 3 columns
-row1 = st.columns(3)
-for idx, prod in enumerate(products[:3]):
-    with row1[idx]:
+cols = st.columns(3)
+for idx, prod in enumerate(products):
+    with cols[idx]:
         st.markdown(f"""
         <div class="product-card">
-            <div class="product-img-container">
-                <img src="{prod['image']}" alt="{prod['title']}"/>
-            </div>
+            <div class="product-img-container"><img src="{prod['image']}"/></div>
             <div class="product-title">{prod['title']}</div>
             <div class="product-rating">{prod['rating']}</div>
             <div class="product-price">{prod['price']}</div>
-            <div class="view-btn">View Product</div>
         </div>
         """, unsafe_allow_html=True)
 
+# ==========================================
+# 7. Floating Chatbot Button (AI Assistant)
+# ==========================================
 st.write("")
+st.divider()
 
-row2 = st.columns(3)
-for idx, prod in enumerate(products[3:]):
-    with row2[idx]:
-        st.markdown(f"""
-        <div class="product-card">
-            <div class="product-img-container">
-                <img src="{prod['image']}" alt="{prod['title']}"/>
-            </div>
-            <div class="product-title">{prod['title']}</div>
-            <div class="product-rating">{prod['rating']}</div>
-            <div class="product-price">{prod['price']}</div>
-            <div class="view-btn">View Product</div>
-        </div>
-        """, unsafe_allow_html=True)
-
-# ==========================================
-# 8. AI Shopping Assistant Section (RAG Integration)
-# ==========================================
-st.markdown("""
-<div class="ai-section">
-    <div class="ai-header">🤖 Ask ShopMind AI</div>
-    <div class="ai-sub">Ask questions about products and customer reviews.</div>
-</div>
-""", unsafe_allow_html=True)
-
-query = st.text_input("Input Query", placeholder="What would you like to know? (e.g., Which product has the best customer reviews?)", key="rag_input", label_visibility="collapsed")
-
-if st.button("Ask ShopMind AI", key="ask_rag_btn", type="primary"):
-    if query:
-        with st.spinner("Analyzing product reviews with AI..."):
-            # Unchanged RAG logic
-            context, retrieved_chunks = retrieve_context(query)
-            
-            prompt = f"""
+# زر منبثق كأنه كورة/شات عائم للـ RAG Assistant
+with st.popover("💬 Chat with ShopMind AI Assistant", use_container_width=True):
+    st.subheader("🤖 Ask ShopMind AI")
+    st.caption("Ask questions about products and customer reviews.")
+    
+    query = st.text_input("Your Question:", placeholder="Is the PSU really 450w?")
+    
+    if st.button("Ask Assistant", type="primary"):
+        if query:
+            with st.spinner("Analyzing product reviews..."):
+                try:
+                    context, retrieved_chunks = retrieve_context(query)
+                    
+                    prompt = f"""
 You are an Amazon Product Question Answering Assistant.
 
 Answer the customer question using ONLY the provided context.
@@ -452,25 +308,27 @@ Question:
 
 Answer:
 """
-            response = client.models.generate_content(
-                model="gemini-2.5-flash",
-                contents=prompt
-            )
-            
-            # Display Answer Card
-            st.markdown("#### 🤖 AI Answer")
-            st.info(response.text)
-            
-            # Display Retrieved Reviews Expander
-            with st.expander("🔎 Sources / Retrieved Reviews"):
-                reviews_list = []
-                for i, item in enumerate(retrieved_chunks, start=1):
-                    text = item["document"]
-                    if "Answer:" in text:
-                        text = text.split("Answer:")[-1].strip()
-                    elif "Question:" in text:
-                        text = text.split("?")[-1].replace("Answer:", "").strip()
-                    reviews_list.append(f"**Review {i}:**\n{text}")
-                st.markdown("\n\n---\n\n".join(reviews_list))
-    else:
-        st.warning("Please enter your question first.")
+                    # تعديل اسم الموديل إلى النموذج المستقر gemini-2.0-flash
+                    response = client.models.generate_content(
+                        model="gemini-2.0-flash",
+                        contents=prompt
+                    )
+                    
+                    st.markdown("#### 🤖 AI Answer")
+                    st.success(response.text)
+                    
+                    with st.expander("🔎 View Retrieved Reviews"):
+                        reviews_list = []
+                        for i, item in enumerate(retrieved_chunks, start=1):
+                            text = item["document"]
+                            if "Answer:" in text:
+                                text = text.split("Answer:")[-1].strip()
+                            elif "Question:" in text:
+                                text = text.split("?")[-1].replace("Answer:", "").strip()
+                            reviews_list.append(f"**Review {i}:**\n{text}")
+                        st.markdown("\n\n---\n\n".join(reviews_list))
+
+                except Exception as e:
+                    st.error(f"Error generating answer: {str(e)}")
+        else:
+            st.warning("Please type a question first.")
