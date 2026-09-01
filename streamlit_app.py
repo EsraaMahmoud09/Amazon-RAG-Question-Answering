@@ -13,16 +13,12 @@ st.set_page_config(
     layout="wide"
 )
 
-# Custom CSS with Floating Chat Widget Styling
 st.markdown("""
 <style>
-    /* Global Styles */
     .stApp {
         background-color: #f8fafc;
         font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
     }
-    
-    /* Login / Sign Up Card */
     .auth-container {
         max-width: 450px;
         margin: 40px auto;
@@ -33,18 +29,8 @@ st.markdown("""
         border: 1px solid #e2e8f0;
         text-align: center;
     }
-    .auth-title {
-        color: #1e293b;
-        font-size: 28px;
-        font-weight: 800;
-    }
-    .auth-subtitle {
-        color: #64748b;
-        font-size: 14px;
-        margin-bottom: 24px;
-    }
-    
-    /* Top Navbar Header */
+    .auth-title { color: #1e293b; font-size: 28px; font-weight: 800; }
+    .auth-subtitle { color: #64748b; font-size: 14px; margin-bottom: 24px; }
     .shopmind-header {
         background-color: #0f172a;
         padding: 16px 32px;
@@ -55,19 +41,8 @@ st.markdown("""
         justify-content: space-between;
         margin-bottom: 24px;
     }
-    .shopmind-logo {
-        color: #6366f1;
-        font-size: 24px;
-        font-weight: 800;
-    }
-    .shopmind-tagline {
-        color: #94a3b8;
-        font-size: 13px;
-        border-left: 1px solid #334155;
-        padding-left: 12px;
-    }
-    
-    /* Welcome Banner */
+    .shopmind-logo { color: #6366f1; font-size: 24px; font-weight: 800; }
+    .shopmind-tagline { color: #94a3b8; font-size: 13px; border-left: 1px solid #334155; padding-left: 12px; }
     .welcome-card {
         background: linear-gradient(135deg, #4f46e5 0%, #3730a3 100%);
         padding: 28px 32px;
@@ -75,8 +50,6 @@ st.markdown("""
         color: white;
         margin-bottom: 24px;
     }
-    
-    /* Product Cards Styling */
     .product-card {
         background-color: #ffffff;
         padding: 18px;
@@ -86,44 +59,19 @@ st.markdown("""
         transition: transform 0.2s ease;
         height: 100%;
     }
-    .product-card:hover {
-        transform: translateY(-4px);
-    }
+    .product-card:hover { transform: translateY(-4px); }
     .product-img-container {
-        width: 100%;
-        height: 170px;
-        overflow: hidden;
-        border-radius: 10px;
-        margin-bottom: 14px;
-        background-color: #f1f5f9;
+        width: 100%; height: 170px; overflow: hidden; border-radius: 10px; margin-bottom: 14px; background-color: #f1f5f9;
     }
-    .product-img-container img {
-        width: 100%;
-        height: 100%;
-        object-fit: cover;
-    }
-    .product-title {
-        font-size: 15px;
-        font-weight: 600;
-        color: #1e293b;
-        margin-bottom: 8px;
-    }
-    .product-rating {
-        color: #f59e0b;
-        font-size: 13px;
-        font-weight: 600;
-    }
-    .product-price {
-        color: #0f172a;
-        font-size: 18px;
-        font-weight: 700;
-        margin-top: 6px;
-    }
+    .product-img-container img { width: 100%; height: 100%; object-fit: cover; }
+    .product-title { font-size: 15px; font-weight: 600; color: #1e293b; margin-bottom: 8px; }
+    .product-rating { color: #f59e0b; font-size: 13px; font-weight: 600; }
+    .product-price { color: #0f172a; font-size: 18px; font-weight: 700; margin-top: 6px; }
 </style>
 """, unsafe_allow_html=True)
 
 # ==========================================
-# 2. Authentication System (Login / Create Account Gate)
+# 2. Authentication System
 # ==========================================
 if "authenticated" not in st.session_state:
     st.session_state.authenticated = False
@@ -150,7 +98,6 @@ if not st.session_state.authenticated:
                 if email_input and password:
                     st.session_state.authenticated = True
                     st.session_state.user_email = email_input
-                    # حفظ الاسم المدخل أو استخدام الجزء الأول من الإيميل كبديل
                     st.session_state.full_name = full_name_input if full_name_input.strip() else email_input.split('@')[0]
                     st.rerun()
                 else:
@@ -185,7 +132,7 @@ if not os.path.exists(DB_FOLDER):
         st.stop()
 
 from retrieve_utils import retrieve_context
-from google import genai
+import google.generativeai as genai
 
 load_dotenv()
 api_key = os.getenv("GEMINI_API_KEY") or st.secrets.get("GEMINI_API_KEY")
@@ -194,7 +141,9 @@ if not api_key:
     st.error("⚠️ GEMINI_API_KEY missing!")
     st.stop()
 
-client = genai.Client(api_key=api_key)
+# تهيئة المكتبة القديمة المسجلة في المشروع الأصلي
+genai.configure(api_key=api_key)
+model = genai.GenerativeModel("gemini-1.5-flash")
 
 # ==========================================
 # 4. Sidebar Navigation Menu
@@ -226,7 +175,7 @@ with st.sidebar:
     st.markdown("🎮 **Gaming**")
 
 # ==========================================
-# 5. Top Navbar Header & Welcome Banner
+# 5. Header & Banner
 # ==========================================
 st.markdown("""
 <div class="shopmind-header">
@@ -248,7 +197,7 @@ st.text_input("Search Bar", placeholder="What are you looking for?", label_visib
 st.write("")
 
 # ==========================================
-# 6. Featured Products Grid
+# 6. Featured Products
 # ==========================================
 st.subheader("Featured Products")
 
@@ -271,12 +220,11 @@ for idx, prod in enumerate(products):
         """, unsafe_allow_html=True)
 
 # ==========================================
-# 7. Floating Chatbot Button (AI Assistant)
+# 7. Floating Chatbot Component
 # ==========================================
 st.write("")
 st.divider()
 
-# Popover Chat Widget
 with st.popover("💬 Chat with ShopMind AI Assistant", use_container_width=True):
     st.subheader("🤖 Ask ShopMind AI")
     st.caption("Ask questions about products and customer reviews.")
@@ -310,11 +258,8 @@ Question:
 
 Answer:
 """
-                    # تم التعديل إلى الموديل المستقر gemini-1.5-flash
-                    response = client.models.generate_content(
-                        model="gemini-1.5-flash",
-                        contents=prompt
-                    )
+                    # توليد الإجابة بالمكتبة المستقرة الأصيلة
+                    response = model.generate_content(prompt)
                     
                     st.markdown("#### 🤖 AI Answer")
                     st.success(response.text)
