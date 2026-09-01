@@ -512,45 +512,29 @@ st.subheader(
 
 
 products = [
-
     {
         "title": "Wireless Headphones",
         "rating": "⭐ 4.5",
         "price": "$89.99",
-        "image":
-            "https://images.unsplash.com/"
-            "photo-1505740420928-5e560c06d30e"
-            "?w=500&q=80"
+        "image": "https://images.unsplash.com/photo-1505740420928-5e560c06d30e?w=500&q=80"
     },
-
     {
         "title": "Gaming Keyboard",
         "rating": "⭐ 4.7",
         "price": "$64.99",
-        "image":
-            "https://images.unsplash.com/"
-            "photo-1587829741301-dc798b83add3"
-            "?w=500&q=80"
+        "image": "https://images.unsplash.com/photo-1587829741301-dc798b83add3?w=500&q=80"
     },
-
     {
         "title": "Smart Watch",
         "rating": "⭐ 4.4",
         "price": "$79.99",
-        "image":
-            "https://images.unsplash.com/"
-            "photo-1523275335684-37898b6baf30"
-            "?w=500&q=80"
+        "image": "https://images.unsplash.com/photo-1523275335684-37898b6baf30?w=500&q=80"
     },
-
     {
         "title": "Digital Camera",
         "rating": "⭐ 4.6",
         "price": "$499.99",
-        "image":
-            "https://images.unsplash.com/"
-            "photo-1516035069371-29a1b244cc32"
-            "?w=500&q=80"
+        "image": "https://images.unsplash.com/photo-1516035069371-29a1b244cc32?w=500&q=80"
     }
 ]
 
@@ -568,9 +552,7 @@ for idx, prod in enumerate(products):
 
                 <div class="product-img-container">
 
-                    <img
-                        src="{prod['image']}"
-                    />
+                    <img src="{prod['image']}" />
 
                 </div>
 
