@@ -52,7 +52,7 @@ def semantic_search(query, top_k=5):
 # =============================================================================
 # BM25 Retrieval
 # =============================================================================
-def lexical_search(query, top_k=5):  # تم إضافة top_k كـ argument لتفادي TypeError
+def lexical_search(query, top_k=5):
 
     query_tokens = query.lower().split()
     scores = bm25.get_scores(query_tokens)
@@ -156,17 +156,22 @@ def remove_duplicates(reranked_results):
 # =============================================================================
 def build_context(results, max_chunks=5):
     """
-    Build the final context passed to the LLM.
+    Build the final context passed to the LLM containing clean review texts.
     """
 
     context = ""
     selected_chunks = results[:max_chunks]
 
     for i, item in enumerate(selected_chunks, start=1):
-        context += (
-            f"Context {i}\n"
-            f"{item['document']}\n\n"
-        )
+        text = item['document']
+        
+        # Clean question prefixes and keep only answer/review content
+        if "Answer:" in text:
+            text = text.split("Answer:")[-1].strip()
+        elif "Question:" in text:
+            text = text.split("?")[-1].replace("Answer:", "").strip()
+
+        context += f"Review {i}:\n{text}\n\n"
 
     return context
 
