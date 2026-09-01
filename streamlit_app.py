@@ -436,71 +436,33 @@ with st.sidebar:
 # 8. Header
 # ==========================================
 
-st.markdown("""
-<div class="shopmind-header">
-
-    <div style="
-        display:flex;
-        align-items:center;
-        gap:12px;
-    ">
-
-        <span class="shopmind-logo">
-            🛍️ ShopMind AI
-        </span>
-
-        <span class="shopmind-tagline">
-            Intelligent Product Discovery
-        </span>
-
-    </div>
-
-</div>
-""", unsafe_allow_html=True)
-
+header_left, header_right = st.columns([4, 1])
+with header_left:
+    st.markdown("## 🛍️ ShopMind AI")
+    st.caption("Intelligent Product Discovery")
+with header_right:
+    st.write("")
+    st.button("🛒 Cart", use_container_width=True, disabled=True)
 
 # ==========================================
 # 9. Welcome Banner
 # ==========================================
 
-st.markdown(
-    f"""
-    <div class="welcome-card">
-
-        <div style="
-            font-size:24px;
-            font-weight:700;
-        ">
-            Welcome back, {user_display_name} 👋
-        </div>
-
-        <div style="
-            color:#e0e7ff;
-            font-size:15px;
-            margin-top:6px;
-        ">
-            Discover products and ask our AI
-            assistant questions about customer reviews.
-        </div>
-
-    </div>
-    """,
-    unsafe_allow_html=True
+st.info(
+    f"### Welcome back, {user_display_name} 👋\n\n"
+    "Discover products and ask our AI assistant questions about customer reviews."
 )
-
 
 # ==========================================
 # 10. Search Bar
 # ==========================================
 
 search_term = st.text_input(
-    "Search Bar",
+    "Search products",
     placeholder="What are you looking for?",
     label_visibility="collapsed",
     key="product_search",
 )
-
-st.write("")
 
 # ==========================================
 # 11. Mock Products
@@ -508,7 +470,6 @@ st.write("")
 
 st.subheader("✨ Featured Products")
 
-# Mock data للعرض فقط. لا علاقة لها بقاعدة Chroma أو منطق الـ RAG.
 products = [
     {
         "title": "Wireless Headphones",
@@ -516,8 +477,6 @@ products = [
         "rating": 4.5,
         "reviews": 1284,
         "price": 89.99,
-        "old_price": 119.99,
-        "badge": "Best Seller",
         "image": "https://images.unsplash.com/photo-1505740420928-5e560c06d30e?auto=format&fit=crop&w=800&q=85",
     },
     {
@@ -526,8 +485,6 @@ products = [
         "rating": 4.7,
         "reviews": 846,
         "price": 64.99,
-        "old_price": 79.99,
-        "badge": "Deal",
         "image": "https://images.unsplash.com/photo-1587829741301-dc798b83add3?auto=format&fit=crop&w=800&q=85",
     },
     {
@@ -536,8 +493,6 @@ products = [
         "rating": 4.4,
         "reviews": 512,
         "price": 79.99,
-        "old_price": 99.99,
-        "badge": "Popular",
         "image": "https://images.unsplash.com/photo-1523275335684-37898b6baf30?auto=format&fit=crop&w=800&q=85",
     },
     {
@@ -546,8 +501,6 @@ products = [
         "rating": 4.6,
         "reviews": 319,
         "price": 499.99,
-        "old_price": 599.99,
-        "badge": "Top Rated",
         "image": "https://images.unsplash.com/photo-1516035069371-29a1b244cc32?auto=format&fit=crop&w=800&q=85",
     },
     {
@@ -556,18 +509,14 @@ products = [
         "rating": 4.3,
         "reviews": 702,
         "price": 39.99,
-        "old_price": 49.99,
-        "badge": "Value Pick",
         "image": "https://images.unsplash.com/photo-1524758631624-e2822e304c36?auto=format&fit=crop&w=800&q=85",
     },
     {
-        "title": "Mechanical Mouse",
-        "category": "Gaming",
+        "title": "Wireless Mouse",
+        "category": "Computers",
         "rating": 4.6,
         "reviews": 934,
         "price": 29.99,
-        "old_price": 44.99,
-        "badge": "Deal",
         "image": "https://images.unsplash.com/photo-1527814050087-3793815479db?auto=format&fit=crop&w=800&q=85",
     },
     {
@@ -576,8 +525,6 @@ products = [
         "rating": 4.5,
         "reviews": 611,
         "price": 54.99,
-        "old_price": 69.99,
-        "badge": "Popular",
         "image": "https://images.unsplash.com/photo-1608043152269-423dbba4e7e1?auto=format&fit=crop&w=800&q=85",
     },
     {
@@ -586,59 +533,36 @@ products = [
         "rating": 4.2,
         "reviews": 428,
         "price": 74.99,
-        "old_price": 94.99,
-        "badge": "New",
         "image": "https://images.unsplash.com/photo-1495474472287-4d71bcdd2085?auto=format&fit=crop&w=800&q=85",
     },
 ]
 
-query_text = search_term.strip().lower()
-if query_text:
-    visible_products = [
-        product
-        for product in products
-        if query_text in product["title"].lower()
-        or query_text in product["category"].lower()
-    ]
-else:
-    visible_products = products
+search = search_term.strip().lower()
+visible_products = [
+    product for product in products
+    if not search
+    or search in product["title"].lower()
+    or search in product["category"].lower()
+]
 
 if not visible_products:
-    st.info("No products match your search.")
+    st.warning("No products found.")
 else:
-    for row_start in range(0, len(visible_products), 4):
+    for start_index in range(0, len(visible_products), 4):
         columns = st.columns(4, gap="medium")
-
-        for column, product in zip(columns, visible_products[row_start:row_start + 4]):
+        for column, product in zip(columns, visible_products[start_index:start_index + 4]):
             with column:
-                with st.container(border=True):
-                    st.image(
-                        product["image"],
-                        use_container_width=True,
-                        output_format="auto",
-                    )
-
-                    st.markdown(f"**{product['title']}**")
-                    st.caption(product["category"])
-                    st.markdown(
-                        f"⭐ **{product['rating']}** "
-                        f"({product['reviews']:,} reviews)"
-                    )
-                    st.markdown(
-                        f"<span style='font-size:22px;font-weight:800;'>"
-                        f"${product['price']:.2f}</span> "
-                        f"<span style='color:#94a3b8;text-decoration:line-through;'>"
-                        f"${product['old_price']:.2f}</span>",
-                        unsafe_allow_html=True,
-                    )
-                    st.success(product["badge"], icon="✅")
-                    st.button(
-                        "View product",
-                        key=f"view_{product['title']}",
-                        use_container_width=True,
-                    )
-
-
+                st.image(product["image"], use_container_width=True)
+                st.markdown(f"**{product['title']}**")
+                st.caption(product["category"])
+                st.write(f"⭐ {product['rating']} ({product['reviews']:,} reviews)")
+                st.markdown(f"### ${product['price']:.2f}")
+                st.button(
+                    "View product",
+                    key=f"view_{product['title']}",
+                    use_container_width=True,
+                    disabled=True,
+                )
 
 # ==========================================
 # 12. AI Shopping Assistant
