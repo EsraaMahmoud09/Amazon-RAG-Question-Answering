@@ -128,8 +128,10 @@ Answer:
         st.success(answer)
 
         with st.expander("View Retrieved Documents"):
-            for i, item in enumerate(retrieved_chunks, start=1):
-                st.write(f"### Document {i}")
-                st.write(item["document"])
+            # Combine all retrieved document texts into a single string
+            combined_docs = "\n\n".join([item["document"] for item in retrieved_chunks])
+            
+            # Display the consolidated text inside the expander
+            st.write(combined_docs)
     else:
         st.warning("Please enter a question first.")
