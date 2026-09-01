@@ -13,7 +13,7 @@ st.set_page_config(
     layout="wide"
 )
 
-# Custom CSS with Floating Floating Chat Widget Styling
+# Custom CSS with Floating Chat Widget Styling
 st.markdown("""
 <style>
     /* Global Styles */
@@ -139,17 +139,19 @@ if not st.session_state.authenticated:
     col_a, col_b, col_c = st.columns([1, 2, 1])
     with col_b:
         with st.form("signup_form"):
-            st.text_input("Full Name", placeholder="Esraa Mahmoud")
-            email = st.text_input("Email Address", placeholder="user@example.com")
+            full_name_input = st.text_input("Full Name", placeholder="Esraa Mahmoud")
+            email_input = st.text_input("Email Address", placeholder="user@example.com")
             password = st.text_input("Password", type="password")
             confirm_password = st.text_input("Confirm Password", type="password")
             
             submit_button = st.form_submit_button("Create Account", use_container_width=True)
             
             if submit_button:
-                if email and password:
+                if email_input and password:
                     st.session_state.authenticated = True
-                    st.session_state.user_email = email
+                    st.session_state.user_email = email_input
+                    # حفظ الاسم المدخل أو استخدام الجزء الأول من الإيميل كبديل
+                    st.session_state.full_name = full_name_input if full_name_input.strip() else email_input.split('@')[0]
                     st.rerun()
                 else:
                     st.warning("Please fill in all required fields.")
@@ -197,7 +199,7 @@ client = genai.Client(api_key=api_key)
 # ==========================================
 # 4. Sidebar Navigation Menu
 # ==========================================
-user_display_name = st.session_state.user_email.split('@')[0].capitalize()
+user_display_name = st.session_state.get("full_name", st.session_state.user_email.split('@')[0])
 
 with st.sidebar:
     st.markdown(f"### 👋 Hello, {user_display_name}")
@@ -274,7 +276,7 @@ for idx, prod in enumerate(products):
 st.write("")
 st.divider()
 
-# زر منبثق كأنه كورة/شات عائم للـ RAG Assistant
+# Popover Chat Widget
 with st.popover("💬 Chat with ShopMind AI Assistant", use_container_width=True):
     st.subheader("🤖 Ask ShopMind AI")
     st.caption("Ask questions about products and customer reviews.")
@@ -308,9 +310,9 @@ Question:
 
 Answer:
 """
-                    # تعديل اسم الموديل إلى النموذج المستقر gemini-2.0-flash
+                    # تم التعديل إلى الموديل المستقر gemini-1.5-flash
                     response = client.models.generate_content(
-                        model="gemini-2.0-flash",
+                        model="gemini-1.5-flash",
                         contents=prompt
                     )
                     
