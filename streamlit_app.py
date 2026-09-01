@@ -1,23 +1,23 @@
 import os
 import zipfile
-import gdown
+import urllib.request
 import streamlit as st
 from dotenv import load_dotenv
 
 # ==========================================
-# 1. Download Database Automatically on First Run
+# 1. Download Database Automatically from GitHub Release
 # ==========================================
 DB_FOLDER = "chroma_db"
-ZIP_FILE = "chroma_db.zip"
+ZIP_FILE = "chroma_db.2.zip"
 
-# File ID from Google Drive
-GDRIVE_FILE_ID = "1W69NkpHQTLSSDNY-IvGgLLFPOWEEl6Ia"
+# Direct URL to the exact file in GitHub Releases
+DB_URL = "https://github.com/EsraaMahmoud09/Amazon-RAG-Question-Answering/releases/download/v1.0.0/chroma_db.2.zip"
 
 if not os.path.exists(DB_FOLDER):
     st.info("⏳ Downloading database for the first time, this may take a minute...")
     
-    # Download directly using File ID to bypass large file warning screen
-    gdown.download(id=GDRIVE_FILE_ID, output=ZIP_FILE, quiet=False)
+    # Download directly using urllib
+    urllib.request.urlretrieve(DB_URL, ZIP_FILE)
     
     # Extract the zip file contents
     with zipfile.ZipFile(ZIP_FILE, 'r') as zip_ref:
@@ -27,7 +27,8 @@ if not os.path.exists(DB_FOLDER):
     if os.path.exists(ZIP_FILE):
         os.remove(ZIP_FILE)
         
-    st.success("✅ Database downloaded and extracted successfully!")
+    st.success(" Database downloaded and extracted successfully!")
+
 # ==========================================
 # 2. Import Search Utils & Gemini (After ensuring DB exists)
 # ==========================================
