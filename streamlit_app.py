@@ -493,103 +493,151 @@ st.markdown(
 # 10. Search Bar
 # ==========================================
 
-st.text_input(
+search_term = st.text_input(
     "Search Bar",
     placeholder="What are you looking for?",
-    label_visibility="collapsed"
+    label_visibility="collapsed",
+    key="product_search",
 )
 
 st.write("")
 
-
 # ==========================================
-# 11. Featured Products
+# 11. Mock Products
 # ==========================================
 
-st.subheader(
-    "✨ Featured Products"
-)
+st.subheader("✨ Featured Products")
 
-
+# Mock data للعرض فقط. لا علاقة لها بقاعدة Chroma أو منطق الـ RAG.
 products = [
-
     {
         "title": "Wireless Headphones",
-        "rating": "⭐ 4.5",
-        "price": "$89.99",
-        "image":
-            "https://images.unsplash.com/"
-            "photo-1505740420928-5e560c06d30e"
-            "?w=500&q=80"
+        "category": "Electronics",
+        "rating": 4.5,
+        "reviews": 1284,
+        "price": 89.99,
+        "old_price": 119.99,
+        "badge": "Best Seller",
+        "image": "https://images.unsplash.com/photo-1505740420928-5e560c06d30e?auto=format&fit=crop&w=800&q=85",
     },
-
     {
         "title": "Gaming Keyboard",
-        "rating": "⭐ 4.7",
-        "price": "$64.99",
-        "image":
-            "https://images.unsplash.com/"
-            "photo-1587829741301-dc798b83add3"
-            "?w=500&q=80"
+        "category": "Gaming",
+        "rating": 4.7,
+        "reviews": 846,
+        "price": 64.99,
+        "old_price": 79.99,
+        "badge": "Deal",
+        "image": "https://images.unsplash.com/photo-1587829741301-dc798b83add3?auto=format&fit=crop&w=800&q=85",
     },
-
     {
         "title": "Smart Watch",
-        "rating": "⭐ 4.4",
-        "price": "$79.99",
-        "image":
-            "https://images.unsplash.com/"
-            "photo-1523275335684-37898b6baf30"
-            "?w=500&q=80"
+        "category": "Electronics",
+        "rating": 4.4,
+        "reviews": 512,
+        "price": 79.99,
+        "old_price": 99.99,
+        "badge": "Popular",
+        "image": "https://images.unsplash.com/photo-1523275335684-37898b6baf30?auto=format&fit=crop&w=800&q=85",
     },
-
     {
         "title": "Digital Camera",
-        "rating": "⭐ 4.6",
-        "price": "$499.99",
-        "image":
-            "https://images.unsplash.com/"
-            "photo-1516035069371-29a1b244cc32"
-            "?w=500&q=80"
-    }
+        "category": "Photography",
+        "rating": 4.6,
+        "reviews": 319,
+        "price": 499.99,
+        "old_price": 599.99,
+        "badge": "Top Rated",
+        "image": "https://images.unsplash.com/photo-1516035069371-29a1b244cc32?auto=format&fit=crop&w=800&q=85",
+    },
+    {
+        "title": "Laptop Stand",
+        "category": "Computers",
+        "rating": 4.3,
+        "reviews": 702,
+        "price": 39.99,
+        "old_price": 49.99,
+        "badge": "Value Pick",
+        "image": "https://images.unsplash.com/photo-1524758631624-e2822e304c36?auto=format&fit=crop&w=800&q=85",
+    },
+    {
+        "title": "Mechanical Mouse",
+        "category": "Gaming",
+        "rating": 4.6,
+        "reviews": 934,
+        "price": 29.99,
+        "old_price": 44.99,
+        "badge": "Deal",
+        "image": "https://images.unsplash.com/photo-1527814050087-3793815479db?auto=format&fit=crop&w=800&q=85",
+    },
+    {
+        "title": "Portable Speaker",
+        "category": "Electronics",
+        "rating": 4.5,
+        "reviews": 611,
+        "price": 54.99,
+        "old_price": 69.99,
+        "badge": "Popular",
+        "image": "https://images.unsplash.com/photo-1608043152269-423dbba4e7e1?auto=format&fit=crop&w=800&q=85",
+    },
+    {
+        "title": "Coffee Maker",
+        "category": "Home & Kitchen",
+        "rating": 4.2,
+        "reviews": 428,
+        "price": 74.99,
+        "old_price": 94.99,
+        "badge": "New",
+        "image": "https://images.unsplash.com/photo-1495474472287-4d71bcdd2085?auto=format&fit=crop&w=800&q=85",
+    },
 ]
 
+query_text = search_term.strip().lower()
+if query_text:
+    visible_products = [
+        product
+        for product in products
+        if query_text in product["title"].lower()
+        or query_text in product["category"].lower()
+    ]
+else:
+    visible_products = products
 
-cols = st.columns(4)
+if not visible_products:
+    st.info("No products match your search.")
+else:
+    for row_start in range(0, len(visible_products), 4):
+        columns = st.columns(4, gap="medium")
 
+        for column, product in zip(columns, visible_products[row_start:row_start + 4]):
+            with column:
+                with st.container(border=True):
+                    st.image(
+                        product["image"],
+                        use_container_width=True,
+                        output_format="auto",
+                    )
 
-for idx, prod in enumerate(products):
+                    st.markdown(f"**{product['title']}**")
+                    st.caption(product["category"])
+                    st.markdown(
+                        f"⭐ **{product['rating']}** "
+                        f"({product['reviews']:,} reviews)"
+                    )
+                    st.markdown(
+                        f"<span style='font-size:22px;font-weight:800;'>"
+                        f"${product['price']:.2f}</span> "
+                        f"<span style='color:#94a3b8;text-decoration:line-through;'>"
+                        f"${product['old_price']:.2f}</span>",
+                        unsafe_allow_html=True,
+                    )
+                    st.success(product["badge"], icon="✅")
+                    st.button(
+                        "View product",
+                        key=f"view_{product['title']}",
+                        use_container_width=True,
+                    )
 
-    with cols[idx]:
-
-        st.markdown(
-            f"""
-            <div class="product-card">
-
-                <div class="product-img-container">
-
-                    <img
-                        src="{prod['image']}"
-                    />
-
-                </div>
-
-                <div class="product-title">
-                    {prod['title']}
-                </div>
-
-                <div class="product-rating">
-                    {prod['rating']}
-                </div>
-
-                <div class="product-price">
-                    {prod['price']}
-                </div>
-
-            </div>
-            """,
-            unsafe_allow_html=True
-        )
 
 
 # ==========================================
